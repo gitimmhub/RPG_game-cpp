@@ -1,0 +1,176 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <windows.h>
+#include <fstream> //ofstream , ifstream , fstream
+#include <locale.h>
+#include <sstream>
+#include <string>
+#include <time.h>
+#include <funcaorpg.h>
+
+int main(){
+
+    setlocale(LC_ALL,"Portuguese");
+    int e;
+
+    while(e!=1){///menu
+
+        e = menu();
+
+        if(e == 3){
+            return 0;
+        }
+        if(e == 2) {
+            creditos();
+        }
+    }
+    /// aqui começa o jogo
+
+    int cidadeopcao;
+    int escolhaClasse;
+    int comecarJogo=0;
+    player p1;
+    inimigo i1;
+    equipamento e1;
+
+    while(comecarJogo!=1){
+
+        escolhaClasse=0;
+
+        cout<<"Qual será o nome do personagem?"<<endl;
+        cin>>p1.nome;
+
+        while(escolhaClasse!=1 and escolhaClasse!=2 and escolhaClasse!=3){
+            cout<<"Escolha entre: Guerreiro[1], Mago[2] ou Ladino[3]"<<endl;
+            cin>>escolhaClasse;
+
+            if(escolhaClasse == 1) {
+                classe(p1, 1, e1);
+            } else if(escolhaClasse == 2) {
+                classe(p1, 2, e1);
+            } else if (escolhaClasse == 3) {
+                classe(p1, 3, e1);
+            } else {
+                cout<<"1 2 ou 3"<<endl;
+                system ("pause");
+                system("cls");
+            }
+
+        }
+        p1.classe=escolhaClasse;
+
+
+        system("cls");
+
+        cout<<"Seu personagem: \n"<<endl;
+        cout<<"Nome: "<<p1.nome<<"\n"<<endl;
+        cout<<"Força: "<<p1.forca<<"\n"<<endl;
+        cout<<"Agilidade: "<<p1.agil<<"\n"<<endl;
+        cout<<"Defesa: "<<p1.def<<"\n"<<endl;
+        cout<<"Vida: "<<p1.hp<<"\n"<<endl;
+        cout<<"Inteligência: "<<p1.intelig<<"\n"<<endl;
+
+        cout<<"\nBelo Personagem!"<<endl;
+        cout<<"Para começar o jogo digite 1, para recriar seu personagem digite outro número"<<endl;
+        cin>>comecarJogo;
+        system("cls");
+
+    }
+    ///INICIO DO JOGO
+
+    if(taverna(p1,e1)==0){//ESSE IF CONTA A MORTE PELA CERVEJA
+        return 0;
+    }
+    system("cls");
+
+    cidade(e1);
+
+    if(floresta(e1,p1,i1) == 1){
+
+        if(combateGoblin(p1,e1,i1)==0){
+            return 0;
+        }
+
+    } else {
+        casaAbandonada(e1);
+        system("cls");
+        if(combateGoblin(p1,e1,i1)==0){
+            return 0;
+        }
+
+    }
+    ///ARMAZENA O VALOR DOS ITENS ATUAIS
+    int bota, anel, armadura, escudo, espada;
+    anel=e1.anel;
+    armadura = e1.armadura;
+    escudo = e1.escudo;
+    espada = e1.espada;
+    bota = e1.bota;
+    e1.anel = 0;
+    e1.armadura = 0;
+    e1.escudo =0;
+    e1.espada = 0;
+    e1.bota = 0;
+
+    int escada;
+    if(castelo() == 1){
+        escada=escadaria(e1);//SE O CASTELO RETORNAR 1 ELE ENTRA NA ESCADA
+        if(escada==1){
+            system("cls");
+            if(subornar(e1)==0){
+                telademorte();
+                return 0;
+            }
+        }else if(escada==2){
+            system("cls");
+            if(tentaroubar(p1)==0){
+                telademorte();
+                return 0;
+            }
+        }else{
+            system("cls");
+            if(combate(p1,2,i1,e1)==0){
+            telademorte();
+            return 0;
+            }
+        }
+    }
+
+    e1.anel = anel;
+    e1.armadura = armadura;
+    e1.escudo = escudo;
+    e1.espada = espada;
+    e1.bota = bota;
+    p1.hp=30;
+
+    if(saladotrono(p1,e1,i1)==0){
+        ///LUTA CONTRA MISOL
+        if(combateMisol(p1,e1,i1)==0){///ZERO VOCE MORRE
+            return 0;
+        }else{
+            final1();
+            return 0;
+        }
+    }else{
+        if(finalcomchave()==0){
+            if(combateMisol(p1,e1,i1)==0){///ZERO VOCE MORRE
+                return 0;
+            }else{
+                final1();
+                return 0;
+            }
+        }else{
+            ///LUTA CONTRA BARAO
+            encontrabarao();
+            if(combateBarao(p1,e1,i1)==0){///ZERO VOCE MORRE
+                return 0;
+            }else{
+                final2();
+                return 0;
+            }
+        }
+    }
+
+    return 0;
+}
